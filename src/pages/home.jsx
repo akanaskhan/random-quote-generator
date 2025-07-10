@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Spin } from 'antd';
 import { motion } from 'framer-motion';
 import 'antd/dist/reset.css';
 import { LoadingOutlined } from '@ant-design/icons';
 import { AiOutlineDownload } from "react-icons/ai";
+import { Upload, Github, Linkedin, Mail, Globe } from 'lucide-react';
 
 function Home() {
   const ACCESS_KEY = import.meta.env.VITE_ACCESS_KEY;
@@ -45,6 +46,7 @@ function Home() {
     e.preventDefault();
     fetchImages(searchTerm);
   };
+
   const handleImageDownload = async (url, filename, format = 'jpg') => {
     try {
       const response = await axios.get(url, {
@@ -56,7 +58,7 @@ function Home() {
 
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = `${filename}.${format}`; // This sets the filename
+      link.download = `${filename}.${format}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -65,6 +67,10 @@ function Home() {
       console.error('Download failed:', error);
     }
   };
+
+  useEffect(() => {
+    fetchImages("nature");
+  }, []);
 
   return (
     <>
@@ -98,7 +104,13 @@ function Home() {
 
         {error && <div className="text-red-600 text-center mb-4">{error}</div>}
 
-        <Spin spinning={loading} indicator={<LoadingOutlined spin />} tip="Loading..." size="large" className="flex justify-center items-center min-h-[200px]">
+        <Spin
+          spinning={loading}
+          indicator={<LoadingOutlined spin />}
+          tip="Loading..."
+          size="large"
+          className="flex justify-center items-center min-h-[200px]"
+        >
           {!loading && images.length > 0 && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -113,8 +125,7 @@ function Home() {
                     alt={img.alt_description || 'Unsplash Image'}
                     className="w-full h-64 object-cover rounded-lg shadow"
                   />
-                  <div className='flex justify-between py-2 items-center'>
-
+                  <div className="flex justify-between py-2 items-center">
                     <p className="text-xs mt-2 text-gray-600 tracking-normal">
                       Photo by{' '}
                       <a
@@ -139,7 +150,7 @@ function Home() {
                       onClick={() => handleImageDownload(img.urls.full, `photo-${img.id}`, 'jpg')}
                       className="w-auto px-3 py-1.5 ml-1 bg-black hover:bg-blue-700 text-white text-xs rounded shadow opacity-100 group-hover:opacity-100 transition flex flex-row items-center"
                     >
-                      Download <span className='text-md pl-2'><AiOutlineDownload /></span>
+                      Download <span className="text-md pl-2"><AiOutlineDownload /></span>
                     </button>
                   </div>
                 </div>
@@ -148,13 +159,29 @@ function Home() {
           )}
         </Spin>
       </div>
-      <footer className='container-sm'>
-        <div className="border-t border-gray-700 mt-8 py-4 tracking-wider justify-between text-center md:text-left ">
 
-          <a href="https://www.linkedin.com/in/muhammad-anas-khan786" target="_blank">
-            Developed by{" "}
-            <span className="underline text-blue-600">Anas Khan</span>
-          </a>
+      <footer className="mt-16 bg-gray-100 border-t border-gray-100">
+        <div className="container mx-auto px-4 py-10">
+          <div className="flex flex-col items-center space-y-6">
+            <p className="text-lg font-light text-gray-600">Connect with me</p>
+            <div className="flex space-x-8">
+              <a href="https://github.com/akanaskhan" className="text-gray-400 hover:text-black transition-colors duration-300">
+                <Github className="w-6 h-6" />
+              </a>
+              <a href="https://linkedin.com/in/muhammad-anas-khan786" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-black transition-colors duration-300">
+                <Linkedin className="w-6 h-6" />
+              </a>
+              <a href="mailto:muhammadanaskhanak@gmail.com" className="text-gray-400 hover:text-black transition-colors duration-300">
+                <Mail className="w-6 h-6" />
+              </a>
+              <a href="https://akanaskhan.vercel.app" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-black transition-colors duration-300">
+                <Globe className="w-6 h-6" />
+              </a>
+            </div>
+            <p className="text-sm text-gray-400 font-light">
+              © {new Date().getFullYear()} Anas Khan. All rights reserved.
+            </p>
+          </div>
         </div>
       </footer>
     </>
